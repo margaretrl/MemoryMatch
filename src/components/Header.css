@@ -1,0 +1,43 @@
+.bonbon-regular {
+    font-family: "Bonbon", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .delius-swash-caps-regular {
+    font-family: "Delius Swash Caps", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .header {
+    padding: 1rem;
+    background-color: transparent;
+    color: black;
+  }
+
+  p {
+    font-size: 2rem;
+    flex: 1;
+    margin-bottom: 0%;
+  }
+
+  h1 {
+    font-size: 70px;
+    margin-bottom: 0%;
+  }
+
+  .gameContents {
+    display: flex;
+    justify-content: space-between;
+    gap: 55%;
+    margin-top: 0;
+  }
+
+  .content:first-child {
+      margin-right: 20px;
+  } 
+
+  .content {
+    flex: 1;
+  }

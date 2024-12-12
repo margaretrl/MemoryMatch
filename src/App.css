@@ -1,0 +1,10 @@
+html, body, #root {
+  min-height: 100vh;
+  margin: 0; /* Remove default margins */
+  padding: 0; /* Prevent unwanted padding */
+  display: flex; /* Flex layout for centering */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center horizontally */
+  text-align: center;
+}
