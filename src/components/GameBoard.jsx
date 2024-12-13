@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import Card from "./Card";
 import Header from "./Header";
 import RestartGame from "./RestartGame";
+import EndGame from "./EndGame"; // New EndGame component
 import "./GameBoard.css";
 
 function GameBoard() {
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matches, setMatches] = useState(0);
-  const [timer, setTimer] = useState(0); // Timer state
-  const [isGameRunning, setIsGameRunning] = useState(false); // Game running state
+  const [timer, setTimer] = useState(0);
+  const [isGameRunning, setIsGameRunning] = useState(false);
+  const [incorrectAttempts, setIncorrectAttempts] = useState(0); // Track incorrect attempts
+  const [gameOver, setGameOver] = useState(false); // Track game state
 
   useEffect(() => {
     initGame();
@@ -18,22 +21,20 @@ function GameBoard() {
   useEffect(() => {
     let timerInterval;
     if (isGameRunning) {
-      // Start the timer when the game is running
       timerInterval = setInterval(() => {
         setTimer((prevTime) => prevTime + 1);
       }, 1000);
     } else {
-      // Clear the timer when the game is stopped
       clearInterval(timerInterval);
     }
 
-    return () => clearInterval(timerInterval); // Cleanup
+    return () => clearInterval(timerInterval);
   }, [isGameRunning]);
 
   useEffect(() => {
-    // Stop the timer if all matches are found
     if (matches === cards.length / 2 && cards.length > 0) {
       setIsGameRunning(false);
+      setGameOver(true); // End the game
     }
   }, [matches, cards]);
 
@@ -41,33 +42,29 @@ function GameBoard() {
     const emojis = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼"];
     const cards = [];
     for (let i = 0; i < emojis.length; i++) {
-      // Add two copies of each card
       cards.push({ id: i * 2, value: emojis[i], flipped: false, matched: false });
       cards.push({ id: i * 2 + 1, value: emojis[i], flipped: false, matched: false });
     }
 
-    // Shuffle cards
     cards.sort(() => Math.random() - 0.5);
 
-    // Temporarily reveal all cards
     const revealedCards = cards.map((card) => ({ ...card, flipped: true }));
     setCards(revealedCards);
 
-    // Flip cards back after 2 seconds
     setTimeout(() => {
       const hiddenCards = revealedCards.map((card) => ({ ...card, flipped: false }));
       setCards(hiddenCards);
-      setIsGameRunning(true); // Start the game
-      setTimer(0); // Reset the timer
+      setIsGameRunning(true);
+      setTimer(0);
     }, 2000);
 
     setMatches(0);
+    setIncorrectAttempts(0); // Reset incorrect attempts
+    setGameOver(false); // Reset game state
   };
 
   const handleCardClick = (id) => {
     const updatedCards = [...cards];
-
-    // Iterate over cards to find matching
     for (let i = 0; i < updatedCards.length; i++) {
       if (updatedCards[i].id === id) {
         updatedCards[i] = { ...updatedCards[i], flipped: true };
@@ -80,7 +77,6 @@ function GameBoard() {
     const newFlippedCards = [...flippedCards, id];
     setFlippedCards(newFlippedCards);
 
-    // If two cards are flipped, check for a match
     if (newFlippedCards.length === 2) {
       checkMatch(newFlippedCards);
     }
@@ -101,6 +97,7 @@ function GameBoard() {
       );
       setMatches((prev) => prev + 1);
     } else {
+      setIncorrectAttempts((prev) => prev + 1); // Increment incorrect attempts
       setTimeout(() => {
         setCards((prevCards) =>
           prevCards.map((card) =>
@@ -113,6 +110,17 @@ function GameBoard() {
     }
     setFlippedCards([]);
   };
+
+  if (gameOver) {
+    return (
+      <EndGame
+        timer={timer}
+        incorrectAttempts={incorrectAttempts}
+        totalPairs={cards.length / 2}
+        onRestart={initGame}
+      />
+    );
+  }
 
   return (
     <>
@@ -128,7 +136,7 @@ function GameBoard() {
           />
         ))}
       </div>
-      <RestartGame />
+      <RestartGame onRestart={initGame} />
     </>
   );
 }
