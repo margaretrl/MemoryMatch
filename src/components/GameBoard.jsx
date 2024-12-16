@@ -10,6 +10,7 @@ function GameBoard() {
   const [matches, setMatches] = useState(0);
   const [timer, setTimer] = useState(0); // Timer state
   const [isGameRunning, setIsGameRunning] = useState(false); // Game running state
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
     initGame();
@@ -66,6 +67,7 @@ function GameBoard() {
 
   const handleCardClick = (id) => {
     const updatedCards = [...cards];
+    setCounter(counter + 1);
 
     // Iterate over cards to find matching
     for (let i = 0; i < updatedCards.length; i++) {
@@ -116,7 +118,7 @@ function GameBoard() {
 
   return (
     <>
-      <Header matches={matches} totalPairs={cards.length / 2} timer={timer} />
+      <Header matches={matches} totalPairs={cards.length / 2} timer={timer} counter={counter}/>
       <div className="game-board">
         {cards.map((card) => (
           <Card
